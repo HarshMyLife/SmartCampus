@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SmartCampus - College Canteen Digital Platform{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flipkart.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex flex-column align-items-start" href="/" style="line-height: 1;">
+                <span class="fw-bold fs-5 text-white">Smart<span style="color: #ffe500; font-style: italic;">Campus</span></span>
+                <span class="text-white-50" style="font-size: 0.65rem; font-weight: 500; margin-top: 2px;">Canteen Plus <i class="fa-solid fa-star text-warning" style="font-size: 0.6rem;"></i></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="/"><i class="fa-solid fa-house me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item" id="nav-staff" style="display: none;">
+                        <a class="nav-link px-3" href="/staff"><i class="fa-solid fa-kitchen-set me-1"></i> Canteen Portal</a>
+                    </li>
+                    <li class="nav-item" id="nav-delivery" style="display: none;">
+                        <a class="nav-link px-3" href="/delivery"><i class="fa-solid fa-motorcycle me-1"></i> Delivery Hub</a>
+                    </li>
+                    <li class="nav-item" id="nav-admin" style="display: none;">
+                        <a class="nav-link px-3" href="/admin"><i class="fa-solid fa-chart-line me-1"></i> Admin Dashboard</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3" id="auth-buttons-container">
+                    <!-- Loaded dynamically via js -->
+                    <button class="btn btn-outline-light btn-sm px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="fa-solid fa-sign-in me-1"></i> Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-md-start mb-3 mb-md-0">
+                    <strong>SmartCampus Canteen Platform</strong> © 2026. All Rights Reserved.
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="badge badge-sdg-2 me-2 py-2 px-3"><i class="fa-solid fa-bowl-food me-1"></i> SDG 2: Zero Hunger</span>
+                    <span class="badge badge-sdg-8 py-2 px-3"><i class="fa-solid fa-chart-simple me-1"></i> SDG 8: Decent Work & Growth</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-unlock-keyhole text-primary me-2"></i>Sign In / Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-pills mb-3 nav-justified" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-pill nav-link active" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button" role="tab">Login</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-pill nav-link" id="pills-register-tab" data-bs-toggle="pill" data-bs-target="#pills-register" type="button" role="tab">Register</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="pills-tabContent">
+                        <!-- Login Tab -->
+                        <div class="tab-pane fade show active" id="pills-login" role="tabpanel">
+                            <form id="login-form">
+                                <div class="mb-3">
+                                    <label class="form-label">Email address</label>
+                                    <input type="email" class="form-control" id="login-email" required placeholder="name@college.edu">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="login-password" required placeholder="••••••••">
+                                    <small class="text-muted">Staff: staff@smartcampus.com | Rider: delivery@smartcampus.com | Admin: admin@smartcampus.com</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 py-2">Sign In</button>
+                            </form>
+                        </div>
+                        <!-- Register Tab -->
+                        <div class="tab-pane fade" id="pills-register" role="tabpanel">
+                            <form id="register-form">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="reg-name" required placeholder="John Doe">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email address</label>
+                                    <input type="email" class="form-control" id="reg-email" required placeholder="john@college.edu">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Role Type</label>
+                                    <select class="form-select" id="reg-role" required>
+                                        <option value="Student" selected>Student</option>
+                                        <option value="Staff">Kitchen Staff</option>
+                                        <option value="Delivery">Delivery Boy / Rider</option>
+                                        <option value="Admin">Admin</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contact Number</label>
+                                    <input type="text" class="form-control" id="reg-contact" required placeholder="9876543210">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="reg-password" required placeholder="••••••••">
+                                </div>
+                                <button type="submit" class="btn btn-success w-100 py-2">Register Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Login Required Modal -->
+    <div class="modal fade" id="studentLoginPromptModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="fa-solid fa-graduation-cap fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold mb-0">Student Login Required</h5>
+                            <small class="text-muted">Please log in as a Student to place your order</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-primary py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-circle-info fs-5"></i>
+                        <span>Order placement requires an active <strong>Student Account</strong> for campus tracking and wallet security.</span>
+                    </div>
+
+                    <form id="student-login-form">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Student Email Address</label>
+                            <input type="email" class="form-control rounded-3" id="student-login-email" required placeholder="student@smartcampus.com" value="student@smartcampus.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Password</label>
+                            <input type="password" class="form-control rounded-3" id="student-login-password" required placeholder="••••••••" value="student123">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-3 fw-bold mb-2">
+                            <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Log In as Student
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3 pt-2 border-top">
+                        <small class="text-muted">New student? </small>
+                        <a href="javascript:void(0)" class="small fw-bold text-decoration-none" onclick="switchToStudentRegister()">Create Student Account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Common Javascript -->
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

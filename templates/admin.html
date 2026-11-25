@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Top KPI cards -->
+    <div class="col-12 mb-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+            <!-- 1. Registered Students -->
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm p-3 h-100 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-users fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted small">Registered Students</span>
+                            <h4 class="fw-bold mb-0" id="stat-students">0</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 2. Completed Orders -->
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm p-3 h-100 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-cart-check fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted small">Completed Orders</span>
+                            <h4 class="fw-bold mb-0" id="stat-orders">0</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 3. Food Rescued (Plates) -->
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm p-3 h-100 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-bowl-food fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted small">Wastage Saved (Plates)</span>
+                            <h4 class="fw-bold mb-0"><span id="stat-rescued-plates">0</span> <span class="fs-6 text-muted">plates</span></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 4. Loss Recovered (Rupees) -->
+            <div class="col">
+                <div class="card border-0 rounded-4 shadow-sm p-3 h-100 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                            <i class="fa-solid fa-indian-rupee-sign fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted small">SDG 8 Livelihood Saved</span>
+                            <h4 class="fw-bold text-success mb-0" id="stat-recovered-loss">₹0.00</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SDG Impact Targets Panel -->
+    <div class="col-12 mb-4">
+        <div class="card border-0 rounded-4 shadow-sm bg-dark text-white p-4">
+            <h5 class="fw-bold text-warning mb-3"><i class="fa-solid fa-seedling me-2"></i>Campus SDG Sustainability Targets</h5>
+            <div class="row g-4 align-items-center">
+                <div class="col-md-4 text-center border-end border-secondary">
+                    <span class="text-muted small d-block">SDG 2 Zero Hunger Indicator</span>
+                    <h2 class="fw-bold text-success mt-1"><span id="sdg-pct-saved">0</span>%</h2>
+                    <small class="text-muted">Cancelled food matched with alternative buyers</small>
+                </div>
+                <div class="col-md-4 text-center border-end border-secondary">
+                    <span class="text-muted small d-block">SDG 8 Canteen Loss Mitigated</span>
+                    <h2 class="fw-bold text-success mt-1"><span id="sdg-total-recovered">₹0.00</span></h2>
+                    <small class="text-muted">Canteen staff revenue loss recovered from rescues</small>
+                </div>
+                <div class="col-md-4 text-center">
+                    <span class="text-muted small d-block">Campus Wastage Impact Index</span>
+                    <h2 class="fw-bold text-warning mt-1"><span id="sdg-impact-index">100</span>/100</h2>
+                    <small class="text-muted">Target is close to 100 (minimal food waste)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 rounded-4 shadow-sm p-4 h-100 bg-white">
+            <h5 class="fw-bold mb-4"><i class="fa-solid fa-chart-simple text-primary me-2"></i>Campus Canteen Analytics</h5>
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h6 class="text-muted text-center mb-3">Best-Selling Items</h6>
+                    <canvas id="bestsellers-chart" style="max-height: 250px;"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted text-center mb-3">Hourly Ordering Peaks</h6>
+                    <canvas id="peaks-chart" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Account Creator -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 rounded-4 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="fa-solid fa-user-plus text-primary me-2"></i>Add Staff / Rider</h5>
+            </div>
+            <div class="card-body">
+                <form id="create-account-form">
+                    <div class="mb-3">
+                        <label class="form-label small">Full Name</label>
+                        <input type="text" id="acc-name" class="form-control form-control-sm" required placeholder="Aman Rider">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Email Address</label>
+                        <input type="email" id="acc-email" class="form-control form-control-sm" required placeholder="aman@college.edu">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Role Type</label>
+                        <select id="acc-role" class="form-select form-select-sm" required>
+                            <option value="Staff">Canteen Staff</option>
+                            <option value="Delivery">Delivery Rider</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Contact</label>
+                        <input type="text" id="acc-contact" class="form-control form-control-sm" placeholder="9876543219">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Password</label>
+                        <input type="password" id="acc-password" class="form-control form-control-sm" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm w-100 py-2">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Manager Table -->
+    <div class="col-12 mb-4">
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0"><i class="fa-solid fa-carrot text-primary me-2"></i>Canteen Menu Manager</h5>
+                <button class="btn btn-primary btn-sm rounded-3 px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addMenuItemModal">
+                    <i class="fa-solid fa-plus me-1"></i> Add Item
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive" style="max-height: 450px;">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Pic</th>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menu-table-body">
+                            <!-- Dynamic items -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Menu Item Modal -->
+    <div class="modal fade" id="addMenuItemModal" tabindex="-1" aria-labelledby="addMenuItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <h5 class="modal-title fw-bold" id="addMenuItemModalLabel"><i class="fa-solid fa-folder-plus text-primary me-2"></i>Add New Menu Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="create-menu-form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Item Name</label>
+                            <input type="text" name="name" class="form-control rounded-3" required placeholder="Butter Chicken Burger">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Category</label>
+                            <select name="category" class="form-select rounded-3" required>
+                                <option value="Mains">Mains</option>
+                                <option value="Snacks">Snacks</option>
+                                <option value="Drinks">Drinks</option>
+                                <option value="Desserts">Desserts</option>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Price (₹)</label>
+                                <input type="number" name="price" class="form-control rounded-3" required placeholder="90" step="0.5">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Starting Stock</label>
+                                <input type="number" name="stock" class="form-control rounded-3" required placeholder="30">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Item Description</label>
+                            <textarea name="description" class="form-control rounded-3" placeholder="Brief description of taste, ingredients..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Image Upload</label>
+                            <input type="file" name="image_file" class="form-control rounded-3" accept="image/*">
+                            <small class="text-muted d-block mt-1">Or paste a public image URL below</small>
+                            <input type="text" name="image_url" class="form-control mt-1 rounded-3" placeholder="https://images.unsplash.com/...">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2.5 rounded-3 fw-bold mt-2">Publish Menu Item</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Menu Item Modal -->
+    <div class="modal fade" id="editMenuItemModal" tabindex="-1" aria-labelledby="editMenuItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <h5 class="modal-title fw-bold" id="editMenuItemModalLabel"><i class="fa-solid fa-pen-to-square text-primary me-2"></i>Edit Menu Item & Picture</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="edit-menu-form" enctype="multipart/form-data">
+                        <input type="hidden" id="edit-item-id" name="id">
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Item Name</label>
+                            <input type="text" id="edit-item-name" name="name" class="form-control rounded-3" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Category</label>
+                                <select id="edit-item-category" name="category" class="form-select rounded-3" required>
+                                    <option value="Snacks">Snacks</option>
+                                    <option value="Mains">Mains</option>
+                                    <option value="Drinks">Drinks</option>
+                                    <option value="Desserts">Desserts</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Status</label>
+                                <select id="edit-item-status" name="status" class="form-select rounded-3" required>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Price (₹)</label>
+                                <input type="number" id="edit-item-price" name="price" class="form-control rounded-3" required step="0.5">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold">Stock Quantity</label>
+                                <input type="number" id="edit-item-stock" name="stock_quantity" class="form-control rounded-3" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Description</label>
+                            <textarea id="edit-item-description" name="description" class="form-control rounded-3" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Image URL (Web Link)</label>
+                            <input type="text" id="edit-item-image-url" name="image_url" class="form-control rounded-3 mb-2" placeholder="https://images.unsplash.com/...">
+                            <label class="form-label small fw-semibold">Or Upload New Image File</label>
+                            <input type="file" name="image_file" class="form-control rounded-3" accept="image/*">
+                            <div class="mt-2 text-center">
+                                <img id="edit-item-preview" src="" class="rounded border shadow-sm" style="max-height: 100px; display: none;">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-3 fw-bold mt-2">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes & Update Item
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Orders Global Override Queue -->
+    <div class="col-12">
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="fa-solid fa-toolbox text-primary me-2"></i>Global Order Control Console</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Student</th>
+                                <th>Items</th>
+                                <th>Type</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Override Control</th>
+                            </tr>
+                        </thead>
+                        <tbody id="global-orders-table">
+                            <!-- Dynamic orders list -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Audit History Log -->
+    <div class="col-12 mt-4">
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="fa-solid fa-clock-rotate-left text-secondary me-2"></i>Global Action & Payment History Log</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush" id="audit-log-list" style="max-height: 250px; overflow-y: auto;">
+                    <!-- Dynamic logs -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js dependency -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

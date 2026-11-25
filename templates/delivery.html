@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Left Column: Available Jobs or Active Assignment -->
+    <div class="col-lg-8 mb-4">
+        <!-- Availability Toggle Header -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h5 class="fw-bold mb-1">Rider Status Portal</h5>
+                    <p class="text-muted small mb-0">Toggle your delivery status to accept campus orders</p>
+                </div>
+                <div class="form-check form-switch fs-5">
+                    <input class="form-check-input" type="checkbox" id="rider-status-switch" checked onchange="toggleRiderAvailability()">
+                    <label class="form-check-label fw-bold text-success" id="status-switch-label" for="rider-status-switch">Available for Runs</label>
+                </div>
+            </div>
+            
+            <!-- Operator Info & Selector -->
+            <div class="border rounded p-2 bg-light d-flex align-items-center justify-content-between flex-wrap gap-2" style="font-size: 0.8rem;">
+                <div>
+                    <i class="fa-solid fa-bicycle text-primary me-1"></i>
+                    <span class="fw-semibold">Delivery Boy:</span>
+                    <span id="active-rider-name" class="text-primary font-monospace">Loading...</span>
+                </div>
+                <div id="admin-rider-select-div" style="display: none;">
+                    <label class="small text-muted me-1">Select rider:</label>
+                    <select id="rider-select" class="form-select form-select-sm d-inline-block w-auto" style="padding: 2px 24px 2px 8px; font-size: 0.75rem;" onchange="changeActiveRider(this.value)">
+                        <!-- Loaded delivery boys -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Delivery Run Section -->
+        <div id="active-run-panel" class="card border-primary border-2 rounded-4 shadow-sm mb-4" style="display: none;">
+            <div class="card-header bg-primary text-white pt-4 pb-0 border-0">
+                <h5 class="fw-bold mb-0"><i class="fa-solid fa-person-biking me-2"></i>Active Delivery Assignment</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <span class="text-muted small text-uppercase fw-semibold d-block">Delivery Destination</span>
+                        <h5 class="fw-bold text-dark mb-2" id="active-dest"><i class="fa-solid fa-location-dot text-danger me-1"></i> Library Floor 2 Reading Room</h5>
+                        
+                        <span class="text-muted small text-uppercase fw-semibold d-block">Recipient Info</span>
+                        <h6 class="fw-bold mb-1" id="active-recipient-name">Aman Kumar</h6>
+                        <span class="text-muted small" id="active-recipient-contact">Contact: 9876543213</span>
+                    </div>
+                    <div class="col-md-6 border-start-md">
+                        <span class="text-muted small text-uppercase fw-semibold d-block">Total Bill to Collect</span>
+                        <h4 class="fw-bold text-success mb-2" id="active-bill">₹0.00</h4>
+                        <span class="badge bg-success py-1.5 px-3 rounded-pill"><i class="fa-solid fa-credit-card me-1"></i> Prepaid (Wallet)</span>
+                    </div>
+                </div>
+
+                <!-- OTP verification screen -->
+                <div class="border rounded-4 p-4 text-center bg-light">
+                    <h6 class="fw-bold mb-2"><i class="fa-solid fa-shield-check text-primary me-1"></i>Secure Delivery Hand-off</h6>
+                    <p class="small text-muted mb-3">Ask the student for the 4-digit OTP shown on their screen to complete order delivery</p>
+                    
+                    <div class="input-group justify-content-center mx-auto mb-3" style="max-width: 250px;">
+                        <input type="text" id="otp-input" class="form-control text-center fs-4 fw-bold tracking-widest" placeholder="----" maxlength="4">
+                        <button class="btn btn-success fw-bold px-4" type="button" onclick="verifyOTP()"><i class="fa-solid fa-check"></i> Verify</button>
+                    </div>
+                    <div id="otp-error" class="text-danger small mt-2" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Jobs List -->
+        <div id="available-jobs-panel" class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="fa-solid fa-clipboard-list text-primary me-2"></i>Awaiting Assignment</h5>
+            </div>
+            <div class="card-body">
+                <div id="jobs-empty" class="text-center py-5">
+                    <span class="fs-1">📦</span>
+                    <p class="text-muted mt-2">No pending deliveries. Sit back and relax!</p>
+                </div>
+                <div id="jobs-list" class="d-flex flex-column gap-3">
+                    <!-- Dynamic Jobs -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Earnings Summary -->
+    <div class="col-lg-4">
+        <!-- Earnings Metrics -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 text-center" style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); color: white;">
+            <span class="text-white-50 small mb-2 d-block"><i class="fa-solid fa-coins text-warning me-1"></i> Rider Earnings Dashboard</span>
+            <div class="row align-items-center">
+                <div class="col-6 border-end border-secondary">
+                    <small class="text-muted d-block">Today's Jobs</small>
+                    <h3 class="fw-bold mb-0 text-white" id="stat-jobs-count">0</h3>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted d-block">Total Payout</small>
+                    <h3 class="fw-bold mb-0 text-warning" id="stat-jobs-earnings">₹0.00</h3>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <small class="text-muted">Earn ₹20.00 incentive for every successful campus delivery</small>
+        </div>
+
+        <!-- Delivery History log -->
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h5 class="fw-bold"><i class="fa-solid fa-clock-rotate-left text-secondary me-2"></i>Job Log</h5>
+            </div>
+            <div class="card-body">
+                <div id="history-empty" class="text-center py-4 text-muted small">No delivery history logged yet.</div>
+                <div id="history-list" class="d-flex flex-column gap-2 overflow-y-auto" style="max-height: 250px;">
+                    <!-- Dynamic list -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/delivery.js') }}"></script>
+{% endblock %}

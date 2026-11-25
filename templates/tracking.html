@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Back button -->
+        <a href="/" class="btn btn-link text-decoration-none mb-3"><i class="fa-solid fa-arrow-left me-1"></i> Back to Menu</a>
+        
+        <!-- Main Tracking Card -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div>
+                    <span class="text-muted small">Order ID</span>
+                    <h4 class="fw-bold mb-0">#<span id="order-id-label">{{ order_id }}</span></h4>
+                </div>
+                <div class="text-md-end">
+                    <span class="text-muted small d-block">Placed at</span>
+                    <span id="order-time" class="fw-semibold">--:--</span>
+                </div>
+            </div>
+
+            <!-- Status Indicator -->
+            <div class="text-center py-4 bg-light rounded-4 mb-4">
+                <span class="text-muted small d-block text-uppercase fw-semibold tracking-wider mb-1">Current Status</span>
+                <h3 class="fw-bold text-primary mb-2" id="status-text">Checking Status...</h3>
+                <span class="badge bg-warning text-dark px-3 py-2 fs-6" id="queue-pos-badge" style="display: none;">
+                    <i class="fa-solid fa-people-group me-1"></i> <span id="queue-pos-text">0</span> orders ahead of you
+                </span>
+            </div>
+
+            <!-- Live Status Progress Bar -->
+            <div class="position-relative my-5 mx-3">
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="status-progress" role="progressbar" style="width: 0%"></div>
+                </div>
+                
+                <!-- Step nodes -->
+                <div class="d-flex justify-content-between position-absolute w-100 top-50 translate-middle-y">
+                    <!-- Step 1 -->
+                    <div class="text-center position-relative step-node" id="step-ordered">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center border border-white border-3 shadow" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <div class="position-absolute translate-middle-x start-50 mt-1 small fw-semibold" style="white-space: nowrap;">Ordered</div>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="text-center position-relative step-node" id="step-cooking">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center border border-white border-3 shadow" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-fire-burner"></i>
+                        </div>
+                        <div class="position-absolute translate-middle-x start-50 mt-1 small fw-semibold" style="white-space: nowrap;">Cooking</div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="text-center position-relative step-node" id="step-ready">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center border border-white border-3 shadow" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="position-absolute translate-middle-x start-50 mt-1 small fw-semibold" style="white-space: nowrap;">Ready</div>
+                    </div>
+                    <!-- Step 4 (Only for Delivery) -->
+                    <div class="text-center position-relative step-node d-none" id="step-transit">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center border border-white border-3 shadow" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-motorcycle"></i>
+                        </div>
+                        <div class="position-absolute translate-middle-x start-50 mt-1 small fw-semibold" style="white-space: nowrap;">In Transit</div>
+                    </div>
+                    <!-- Step 5 -->
+                    <div class="text-center position-relative step-node" id="step-delivered">
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center border border-white border-3 shadow" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            <i class="fa-solid fa-house-chimney-user"></i>
+                        </div>
+                        <div class="position-absolute translate-middle-x start-50 mt-1 small fw-semibold" style="white-space: nowrap;">Delivered</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OTP Code card (Visible when delivery type order is preparing/in transit) -->
+            <div id="otp-container" class="card border-primary bg-primary-subtle rounded-4 p-4 text-center mb-4" style="display: none;">
+                <span class="text-muted small d-block mb-1 text-uppercase fw-semibold"><i class="fa-solid fa-key me-1"></i> Delivery Hand-off Verification OTP</span>
+                <h1 class="fw-bold tracking-widest text-primary mb-2" style="letter-spacing: 12px; margin-right: -12px;" id="otp-code">----</h1>
+                <small class="text-muted">Share this 4-digit code with the delivery boy only when you receive your food.</small>
+            </div>
+
+            <!-- Rider Details -->
+            <div id="rider-container" class="card border-0 bg-light rounded-4 p-3 mb-4" style="display: none;">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="fs-2 text-primary"><i class="fa-solid fa-user-ninja"></i></span>
+                    <div>
+                        <h6 class="fw-bold mb-0">Delivery Rider Assigned</h6>
+                        <small class="text-muted d-block" id="rider-name">Rohan Rider</small>
+                        <small class="text-muted" id="rider-contact">Contact: 9876543212</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rating & Feedback Section (Visible only when order is Delivered) -->
+            <div id="feedback-card" class="card border-0 rounded-4 shadow-sm mb-4" style="display: none;">
+                <div class="card-header bg-white border-0 pt-4 pb-0 text-center">
+                    <h5 class="fw-bold"><i class="fa-solid fa-star text-warning me-2"></i>Rate & Feedback Your Order</h5>
+                </div>
+                <div class="card-body text-center" id="feedback-body">
+                    <p class="text-muted small">We'd love to hear your thoughts on the food quality and delivery service.</p>
+                    <div class="d-flex justify-content-center gap-3 my-3">
+                        <span class="star-rating fs-3 text-secondary" style="cursor: pointer;" onclick="setRating(1)"><i class="fa-regular fa-star"></i></span>
+                        <span class="star-rating fs-3 text-secondary" style="cursor: pointer;" onclick="setRating(2)"><i class="fa-regular fa-star"></i></span>
+                        <span class="star-rating fs-3 text-secondary" style="cursor: pointer;" onclick="setRating(3)"><i class="fa-regular fa-star"></i></span>
+                        <span class="star-rating fs-3 text-secondary" style="cursor: pointer;" onclick="setRating(4)"><i class="fa-regular fa-star"></i></span>
+                        <span class="star-rating fs-3 text-secondary" style="cursor: pointer;" onclick="setRating(5)"><i class="fa-regular fa-star"></i></span>
+                    </div>
+                    <div class="mb-3">
+                        <textarea id="feedback-comments" class="form-control rounded-3" placeholder="Tell us what you liked or how we can improve..." rows="2"></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-sm rounded-pill px-4 fw-bold" onclick="submitFeedback()">Submit Review</button>
+                </div>
+            </div>
+
+            <!-- Items summary -->
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-list-ul text-secondary me-2"></i>Order Summary</h5>
+            <div id="order-items-list" class="border rounded-4 p-3 mb-4 bg-white">
+                <!-- Loaded dynamically -->
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-3 justify-content-between align-items-center flex-wrap">
+                <div>
+                    <span class="text-muted small">Total Paid</span>
+                    <h4 class="fw-bold text-success mb-0" id="order-total">₹0.00</h4>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-danger px-4" id="cancel-order-btn" style="display: none;" onclick="cancelOrder()">
+                        Cancel Order
+                    </button>
+                    <a href="/" class="btn btn-outline-secondary px-4">
+                        Order More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const orderId = "{{ order_id }}";
+</script>
+<script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
+<style>
+    .last-border-none:last-child {
+        border-bottom: 0 !important;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Payment Gateway</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile_upi_pay.css') }}">
+</head>
+<body class="d-flex align-items-center justify-content-center min-vh-100 p-3">
+
+    <div class="w-100" style="max-width: 400px;">
+        <div class="pay-card p-4">
+            
+            <!-- Header -->
+            <div class="text-center mb-4 border-bottom border-secondary pb-3">
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                    <span class="fs-3">🍲</span>
+                    <h4 class="fw-bold text-white mb-0">SmartCampus Pay</h4>
+                </div>
+                <small class="text-secondary d-block">upi://pay?order_id={{ order_id }}</small>
+            </div>
+            
+            <div id="payment-form-section">
+                <!-- Info Section -->
+                <div class="mb-4 text-center p-3 bg-dark rounded-3 border border-secondary shadow-sm">
+                    <span class="text-secondary small d-block">PAY TO MERCHANT</span>
+                    <span class="fw-bold fs-5 text-white">SmartCampus Canteen</span>
+                    <hr class="my-2 border-secondary">
+                    <span class="text-secondary small d-block">AMOUNT</span>
+                    <h2 class="fw-bold text-success mb-0">₹{{ "%.2f"|format(order.total_amount) }}</h2>
+                </div>
+
+                <form id="mobile-pay-form">
+                    <div class="mb-3">
+                        <label class="form-label text-white-50 small">Your Full Name</label>
+                        <input type="text" id="pay-name" class="form-control bg-dark border-secondary text-white" required placeholder="Aman Kumar">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-white-50 small">Mobile / Contact Number</label>
+                        <input type="text" id="pay-contact" class="form-control bg-dark border-secondary text-white" required placeholder="9876543210" maxlength="10">
+                    </div>
+                    
+                    <div id="status-spinner" class="text-center mb-3 text-success fw-bold" style="display: none;">
+                        <div class="spinner-border spinner-border-sm me-2"></div> Authorizing Transfer...
+                    </div>
+                    
+                    <button type="submit" class="btn btn-pay w-100 py-3">
+                        <i class="fa-solid fa-shield-halved me-1"></i> Swipe to Pay & Confirm
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Success Screen -->
+            <div id="success-section" style="display: none;" class="text-center py-4">
+                <div class="text-success fs-1 mb-3">
+                    <i class="fa-solid fa-circle-check" style="font-size: 5rem;"></i>
+                </div>
+                <h3 class="fw-bold text-white mb-2">Payment Approved!</h3>
+                <p class="text-muted small">Rs. {{ "%.2f"|format(order.total_amount) }} successfully transferred to SmartCampus Canteen.</p>
+                <div class="alert alert-info py-2 small border-0 bg-secondary-subtle text-info-emphasis mt-3">
+                    <i class="fa-solid fa-circle-info me-1"></i> You can check your desktop screen now. It will update automatically.
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        const orderId = "{{ order_id }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/mobile_upi_pay.js') }}"></script>
+</body>
+</html>

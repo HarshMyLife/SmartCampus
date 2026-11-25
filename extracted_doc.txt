@@ -1,0 +1,121 @@
+
+SmartCampus
+Online Food Ordering & Delivery System for College Canteens
+Project Documentation
+Aligned with UN Sustainable Development Goals — SDG 2 (Zero Hunger) & SDG 8 (Decent Work and Economic Growth)
+
+1. Introduction
+SmartCampus is an online food ordering and delivery platform designed specifically for college canteens. It replaces the traditional system of standing in long queues with a digital ordering experience — similar to popular food-delivery apps — but customised for a campus environment with four distinct user roles: Student, Canteen Staff, Delivery Boy, and Admin.
+The system allows students to browse the canteen menu, place orders, pay digitally, and track their order status in real time, while canteen staff manage the kitchen queue and inventory, delivery riders handle order hand-offs with OTP verification, and the admin oversees the entire operation from a single dashboard.
+2. Problem Statement
+Students waste significant time standing in canteen queues during short breaks.
+Canteen staff have no digital way to track incoming orders, stock levels, or peak-hour demand.
+There is no organised way to reduce food wastage when items are over-prepared or an order is cancelled.
+Cash-only payments slow down the counter and create accounting difficulties for canteen management.
+There is no delivery option for students who cannot leave hostels, libraries, or classrooms.
+3. Objectives
+The project aims to build a complete digital ecosystem for campus food services with the following goals:
+Reduce waiting time: Students can pre-order and pick up food without standing in line.
+Digitise canteen operations: Give staff a live dashboard to manage orders, stock, and menu items.
+Enable campus delivery: Allow a dedicated delivery role to bring food to hostels or departments.
+Reduce food wastage (SDG 2 – Zero Hunger): Introduce a "Food Rescue" system that resells cancelled or excess food at a discount instead of throwing it away.
+Support canteen livelihoods (SDG 8 – Decent Work & Growth): Help canteen workers recover financial loss from wasted or cancelled food and track fair revenue.
+Provide data-driven insights: Give admins analytics on best-selling items, peak hours, and wastage reduction.
+4. System Workflow (End-to-End Flow)
+The system is designed so that scanning a QR code placed on canteen tables/counters opens the ordering webpage directly — similar to how modern restaurant QR-ordering systems work.
+Student scans the canteen QR code → SmartCampus ordering page opens.
+Student browses the menu (categorised as All Items, Snacks, Mains, Drinks, Desserts, Food Rescue).
+Student adds items to cart and proceeds to checkout.
+Payment is made via Wallet, UPI, or Card through the integrated payment gateway.
+The order instantly appears in the Canteen Staff's Live Kitchen Orders Queue.
+Staff updates the order status: Ordered → Cooking → Ready.
+If delivery was requested, the order appears in the Delivery Boy's "Ready Deliveries" list.
+Delivery boy accepts the job, delivers the order, and completes hand-off using OTP verification entered by the student.
+Student tracks the order live on a status bar (Ordered → Cooking → Ready → In Transit → Delivered).
+Admin can view and control every order, every role's activity, and full analytics from the Admin Dashboard.
+5. User Roles and Features
+5.1 Student (Main Page / Public Ordering Area)
+This is the primary visiting area — the default page students land on after scanning the QR code. No login is required just to browse; login is used mainly to track orders, use wallet, and save order history.
+Browse menu by category with photos, price, and short description of each item.
+Search bar to quickly find food items.
+Add to cart and place order.
+Multiple payment options: Wallet, UPI, Card/Scanner at the payment gateway.
+Live order tracking bar: Ordered → Cooking → Ready → In Transit → Delivered.
+Delivery OTP displayed on screen for hand-off verification.
+Order history with re-order option.
+Access to the "Food Rescue" section — discounted surplus/cancelled food.
+Wallet balance display with a Top-up option.
+Suggested additions: favourites/reorder shortcut, live queue position ("3 orders ahead of you"), item ratings & reviews, allergy/ingredient tags, group ordering with split payment, and push/sound notification when food is ready.
+5.2 Canteen Staff (Canteen Management Portal)
+Staff can log in and access two core areas: the main student-visiting page (to see what a customer sees) and their own Canteen Management Portal.
+Live Kitchen Orders Queue — shows every incoming order with order number, items, total amount, and time.
+Mark orders as Rescued / Cooking / Ready / Out for Delivery.
+Menu & Inventory Settings — for every item: edit price, update stock quantity, set status (Active/Inactive), and Save changes instantly.
+Suggested additions: set preparation time per item (auto-calculates ETA for students), low-stock alert when quantity drops below a threshold, one-click "mark sold out," daily sales summary, and printable Kitchen Order Token (KOT).
+5.3 Delivery Boy (Campus Delivery Hub)
+The delivery role can access both the Campus Delivery Hub and the main student ordering page.
+View "Ready Deliveries" list — orders awaiting rider assignment.
+Accept a delivery job, view student contact, delivery location (e.g., Hostel Block A), and bill/payment status.
+Rider OTP Verification screen — rider enters the 4-digit OTP shown on the student's screen to confirm and complete hand-off.
+Status toggle showing "On Active Delivery Run" vs. Available.
+Suggested additions: delivery route/zone tagging, accept/reject option if busy, daily delivery count & earnings tracker, and delivery history log.
+5.4 Admin (Admin Dashboard)
+The Admin has unrestricted access — they can enter every section (Student, Staff, Delivery) and control any order at any stage, in addition to their own dashboard.
+Campus SDG Analytics Panel — registered students, completed orders, total revenue, and food wastage rescued (in plates and ₹ value).
+Most Ordered Campus Food Items chart (best-sellers).
+Hourly Ordering Peak Times chart (identify rush hours).
+SDG Target Integration Analytics: percentage of cancelled food saved (SDG 2), total financial loss recovered for canteen workers (SDG 8), and a Campus Wastage Impact Index.
+Full menu management: add new items with name, price, stock, image, and description.
+Manage staff and delivery boy accounts (add/remove/assign roles).
+Suggested additions: complaint/feedback resolution panel, discount & coupon management, exportable sales reports (PDF/Excel), and full control to override/cancel any order in the system.
+6. Unique Feature — Food Rescue System
+This is the standout feature of SmartCampus and directly supports SDG 2 (Zero Hunger). When an order is cancelled or food is over-prepared, instead of discarding it, the item automatically moves into the "Food Rescue" pool and is listed at a discounted price for other students to purchase before it goes to waste.
+Reduces food wastage on campus close to 0%.
+Recovers financial loss for canteen staff by matching cancelled food with new buyers (linked to SDG 8).
+Gives budget-conscious students access to discounted meals.
+Tracked on the Admin dashboard as a measurable sustainability metric (₹ value recovered, plates saved).
+7. Recommended Technology Stack
+Based on the project's requirements — role-based logins, live order tracking, and a QR-based ordering flow — the following stack is recommended:
+Layer
+Recommended Technology
+Reason
+Frontend
+HTML, CSS, JavaScript
+Fast to build, matches the existing menu/cart-style UI already designed
+Backend
+Flask (Python)
+Simple, readable syntax; great for college-level projects; Flask-SocketIO handles real-time order updates well
+Database
+MySQL
+Well suited for structured, relational data such as Users, Orders, Menu, and Inventory
+Real-time updates
+Socket.io
+Instantly syncs order status across Student, Staff, and Delivery Boy screens
+Authentication
+JWT (JSON Web Token)
+Secures role-based login for Staff, Delivery Boy, and Admin
+Payment Gateway
+Razorpay (Test Mode)
+Supports UPI, Card, and Wallet payment methods needed for the cart/checkout flow
+Image Hosting
+Cloudinary / local server storage
+For menu item images uploaded by Admin
+
+Note: Flask-SQLAlchemy is recommended for connecting Flask to the MySQL database, Flask-JWT-Extended for role-based login security, and the Razorpay Python SDK for payment integration.
+8. Core Database Entities
+At a high level, the system's database should include the following main tables/collections:
+Users: user ID, name, contact, email, password (hashed), role (Student/Staff/Delivery/Admin), wallet balance.
+MenuItems: item ID, name, category, price, stock quantity, status (Active/Inactive), image, description.
+Orders: order ID, student ID, items list, total amount, order status, order type (pickup/delivery), timestamp.
+Delivery: delivery ID, order ID, rider ID, delivery location, OTP, status (Assigned/In Transit/Delivered).
+FoodRescue: original order/item reference, discounted price, reason (cancelled/surplus), status (available/sold).
+Payments: payment ID, order ID, method (Wallet/UPI/Card), amount, status.
+Analytics/Reports: derived/aggregated data — best-selling items, peak hours, revenue, wastage recovered — generated from Orders and FoodRescue tables rather than stored separately.
+9. Future Scope
+Mobile app version (Android/iOS) using the same backend.
+AI-based demand prediction to help staff prepare the right quantity of food and reduce wastage further.
+Integration with the college ID card system for faster login and payment.
+Loyalty points / rewards program for frequent students.
+Multi-canteen support if the college has more than one food outlet.
+10. Conclusion
+SmartCampus brings together convenience, efficiency, and sustainability into one platform. By digitising the ordering process for students, giving canteen staff and delivery riders dedicated tools, and giving admins full visibility and control, the system solves everyday campus problems while directly contributing to SDG 2 (Zero Hunger) through the Food Rescue feature and SDG 8 (Decent Work and Economic Growth) by protecting canteen workers' revenue.
